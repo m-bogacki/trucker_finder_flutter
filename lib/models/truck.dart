@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Truck {
   String? deviceId;
-  Map<String, double>? coordinate;
+  Map<String, dynamic>? coordinate;
   Map<String, dynamic>? dateTime;
   int? heading;
   int? speed;
@@ -10,6 +10,7 @@ class Truck {
 
   Truck(
     this.deviceId,
+    this.coordinate,
     this.dateTime,
     this.heading,
     this.speed,

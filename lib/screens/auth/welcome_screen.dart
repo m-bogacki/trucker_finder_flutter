@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trucker_finder/helpers/theme_helpers.dart';
 import './login_screen.dart';
-import './register_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -26,35 +26,16 @@ class WelcomeScreen extends StatelessWidget {
                       Navigator.pushNamed(context, LoginScreen.routeName);
                     },
                     style: ButtonStyle(
-                        fixedSize: MaterialStateProperty.all(Size(300, 45)),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.lightBlueAccent)),
+                        fixedSize:
+                            MaterialStateProperty.all(const Size(300, 45)),
+                        backgroundColor: MaterialStateProperty.all(
+                            const Color(ThemeColors.PrimaryColor))),
                     child: const Text(
                       'Login',
                       style: TextStyle(fontSize: 18, color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, RegisterScreen.routeName);
-                    },
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all(const Size(300, 45)),
-                      side: MaterialStateProperty.all(
-                        const BorderSide(color: Colors.black12, width: 1),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ],

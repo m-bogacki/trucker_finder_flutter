@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:trucker_finder/screens/home_screen.dart';
+import 'package:flutter/services.dart';
+import 'package:trucker_finder/providers/user_provider.dart';
+import 'package:trucker_finder/screens/auth/password_reset_screen.dart';
 import '../../widgets/auth/auth_appBar.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth.dart';
+import '../../providers/auth_provider.dart';
+import '../../helpers/theme_helpers.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login';
@@ -25,8 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isLoading = true;
     });
-    await Provider.of<Auth>(context, listen: false)
-        .authenticate(_loginForm, 'Login');
+    await Provider.of<Auth>(context, listen: false).login(_loginForm);
     setState(() {
       _isLoading = false;
     });
@@ -48,21 +50,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     children: [
                       TextFormField(
+                        keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
+                            return 'Login field can\'t be empty.';
                           }
                           return null;
                         },
                         onSaved: (value) =>
                             _loginForm['EmailOrName'] = value?.toLowerCase(),
-                        decoration:
-                            const InputDecoration(labelText: 'Login/Email*'),
+                        decoration: const InputDecoration(
+                            labelText: ''
+                                'Email*'),
                       ),
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
+                            return 'Password field can\'t be empty.';
                           }
                           return null;
                         },
@@ -70,6 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         obscureText: true,
                         decoration:
                             const InputDecoration(labelText: 'Password*'),
+                      ),
+                      const SizedBox(
+                        height: 30,
                       ),
                       TextButton(
                         onPressed: () async {
@@ -83,7 +90,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                           }
                         },
-                        child: const Text('Login'),
+                        style: ButtonStyle(
+                            fixedSize: MaterialStateProperty.all(Size(300, 45)),
+                            backgroundColor: MaterialStateProperty.all(
+                                Color(ThemeColors.PrimaryColor))),
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                              context, PasswordResetScreen.routeName);
+                        },
+                        child: Text('Forgot password?'),
                       ),
                     ],
                   ),

@@ -16,7 +16,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _form = GlobalKey<FormState>();
-  Map<String, String?> _loginForm = {
+  final Map<String, String?> _loginForm = {
     "EmailOrName": "",
     "Password": "SomeTest*45test",
   };
@@ -24,15 +24,25 @@ class _LoginScreenState extends State<LoginScreen> {
   var _isLoading = false;
 
   Future<void> saveForm() async {
-    _form.currentState?.save();
-    setState(() {
-      _isLoading = true;
-    });
-    await Provider.of<Auth>(context, listen: false).login(_loginForm);
-    setState(() {
-      _isLoading = false;
-    });
-    Navigator.pop(context);
+    if (_form.currentState!.validate()) {
+      try {
+        _form.currentState?.save();
+        setState(() {
+          _isLoading = true;
+        });
+        await Provider.of<Auth>(context, listen: false).login(_loginForm);
+        setState(() {
+          _isLoading = false;
+        });
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+      } catch (error) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('$error')));
+        Navigator.pop(context);
+      }
+    }
   }
 
   @override
@@ -80,20 +90,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextButton(
                         onPressed: () async {
-                          if (_form.currentState!.validate()) {
-                            try {
-                              await saveForm();
-                            } catch (error) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('$error')));
-                              Navigator.pop(context);
-                            }
-                          }
+                          await saveForm();
                         },
-                        style: ButtonStyle(
-                            fixedSize: MaterialStateProperty.all(Size(300, 45)),
-                            backgroundColor: MaterialStateProperty.all(
-                                Color(ThemeColors.PrimaryColor))),
+                        style: ThemeHelpers.buttonStyle,
                         child: const Text(
                           'Login',
                           style: TextStyle(fontSize: 18, color: Colors.white),

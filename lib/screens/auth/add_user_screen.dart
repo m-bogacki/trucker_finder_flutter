@@ -23,7 +23,6 @@ class _AddUserScreenState extends State<AddUserScreen> {
   bool _isLoading = false;
   double passValidatorWidth = 0;
   bool _passValidated = false;
-
   final _passwordController = TextEditingController();
 
   Map<String, dynamic> registrationData = {
@@ -227,7 +226,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
                         style: ButtonStyle(
                             fixedSize: MaterialStateProperty.all(Size(300, 45)),
                             backgroundColor: MaterialStateProperty.all(
-                                const Color(ThemeColors.PrimaryColor))),
+                                const Color(ThemeHelpers.PrimaryColor))),
                         child: const Text(
                           'Create',
                           style: TextStyle(fontSize: 18, color: Colors.white),

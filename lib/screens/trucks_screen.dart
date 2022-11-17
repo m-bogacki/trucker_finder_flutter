@@ -7,37 +7,36 @@ class TrucksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final trucksProvider = Provider.of<Trucks>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('All Trucks'),
       ),
       body: FutureBuilder(
-          future:
-              Provider.of<Trucks>(context, listen: false).getTrucksPositions(),
-          builder: (context, dataSnapshot) {
-            if (dataSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+        future: trucksProvider.getTrucksPositions(),
+        builder: (context, dataSnapshot) {
+          if (dataSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            if (dataSnapshot.error != null) {
+              return const Center(
+                child: Text('An error ocurred'),
+              );
             } else {
-              if (dataSnapshot.error != null) {
-                return const Center(
-                  child: Text('An error ocurred'),
-                );
-              } else {
-                return Consumer<Trucks>(
-                  builder: (context, trucksData, child) => ListView.builder(
-                    itemCount: trucksData.trucks.length,
-                    itemBuilder: (ctx, i) => Card(
-                      child: ListTile(
-                        title: Text(
-                            'Device ID: ${trucksData.trucks[i].deviceId!}'),
-                        onTap: () {},
-                      ),
-                    ),
+              return ListView.builder(
+                itemCount: trucksProvider.trucks.length,
+                itemBuilder: (ctx, i) => Card(
+                  child: ListTile(
+                    title: Text(
+                        'Device ID: ${trucksProvider.trucks[i].deviceId!}'),
+                    onTap: () {},
                   ),
-                );
-              }
+                ),
+              );
             }
-          }),
+          }
+        },
+      ),
     );
   }
 }

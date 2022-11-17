@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
+import 'package:trucker_finder/widgets/auth/auth_appBar.dart';
 import '../widgets/map.dart';
 import '../widgets/app_drawer.dart';
 import '../providers/users_provider.dart';
@@ -28,58 +29,70 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<Users>(context, listen: false);
     return FutureBuilder(
-        future: userProvider.getCurrentUser(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-          _currentUser = snapshot.data as User?;
-          return ChangeNotifierProvider<User>.value(
-            value: _currentUser!,
-            child: Scaffold(
-              appBar: AppBar(
-                title: Consumer<User>(
-                  builder: (ctx, user, _) => Text(_currentIndex == 0
-                      ? 'Hello ${user.firstName}'
-                      : 'Your trucks'),
-                ),
-                centerTitle: false,
-                actions: [
-                  Avatar(23),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                ],
-              ),
-              body: widgets[_currentIndex],
-              bottomNavigationBar: BottomNavigationBar(
-                fixedColor: const Color(ThemeColors.PrimaryColor),
-                currentIndex: _currentIndex,
-                onTap: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                items: const [
-                  BottomNavigationBarItem(
-                    label: 'Home',
-                    icon: Icon(Icons.home_outlined),
-                    activeIcon: Icon(Icons.home),
-                  ),
-                  BottomNavigationBarItem(
-                    label: 'Map',
-                    icon: Icon(Icons.map_outlined),
-                    activeIcon: Icon(Icons.map),
-                  ),
-                ],
-              ),
-              drawer: AppDrawer(),
+      future: userProvider.getCurrentUser(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
             ),
           );
-        });
+        }
+        _currentUser = snapshot.data as User?;
+
+        if (_currentUser == null) {
+          return Scaffold(
+            appBar: AuthAppBar('Connection Error'),
+            body: const Center(
+              child: Text(
+                  'There is some connection issue, please try again later.'),
+            ),
+          );
+        }
+
+        return ChangeNotifierProvider<User>.value(
+          value: _currentUser!,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Consumer<User>(
+                builder: (ctx, user, _) => Text(_currentIndex == 0
+                    ? 'Hello ${user.firstName}'
+                    : 'Your trucks'),
+              ),
+              centerTitle: false,
+              actions: [
+                Avatar(23),
+                const SizedBox(
+                  width: 10,
+                ),
+              ],
+            ),
+            body: widgets[_currentIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              fixedColor: const Color(ThemeHelpers.PrimaryColor),
+              currentIndex: _currentIndex,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              items: const [
+                BottomNavigationBarItem(
+                  label: 'Home',
+                  icon: Icon(Icons.home_outlined),
+                  activeIcon: Icon(Icons.home),
+                ),
+                BottomNavigationBarItem(
+                  label: 'Map',
+                  icon: Icon(Icons.map_outlined),
+                  activeIcon: Icon(Icons.map),
+                ),
+              ],
+            ),
+            drawer: AppDrawer(),
+          ),
+        );
+      },
+    );
   }
 }

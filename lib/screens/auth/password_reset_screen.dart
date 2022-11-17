@@ -46,7 +46,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                     style: ButtonStyle(
                         fixedSize: MaterialStateProperty.all(Size(300, 45)),
                         backgroundColor: MaterialStateProperty.all(
-                            Color(ThemeColors.PrimaryColor))),
+                            Color(ThemeHelpers.PrimaryColor))),
                     child: const Text(
                       'Reset',
                       style: TextStyle(fontSize: 18, color: Colors.white),

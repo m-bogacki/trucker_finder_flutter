@@ -28,11 +28,11 @@ class Users with ChangeNotifier {
     return _currentUser;
   }
 
-  Future<User> getUserById(String userId) async {
+  Future<User?> getUserById(String userId) async {
     await fetchAndSetUsers();
-    User user;
+    User? user;
     try {
-      user = _users.firstWhere((user) => user.Id == userId);
+      user = _users.firstWhere((user) => user.id == userId);
     } catch (error) {
       Uri url = Uri.parse('${constants.appUrl}/User/${userId}');
       final response = await http.get(url);
@@ -86,6 +86,24 @@ class Users with ChangeNotifier {
       ));
       notifyListeners();
       return fetchedUserId;
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> deleteUser(String userId) async {
+    try {
+      final url = Uri.parse('http://api.truckerfinder.pl/api/User/$userId');
+      final response = await http.delete(url, headers: {
+        "Accept": "application/json",
+        "content-type": "application/json"
+      });
+      final extractedData = json.decode(response.body);
+      if (extractedData['Errors'] != null) {
+        throw HttpException(extractedData['Errors']['Message'][0]);
+      }
+      _users.removeWhere((user) => user.id == userId);
+      notifyListeners();
     } catch (error) {
       print(error);
     }

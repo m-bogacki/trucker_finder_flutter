@@ -11,7 +11,7 @@ class HelperMethods {
       final imageAsBytes = await image?.readAsBytes();
       return imageAsBytes;
     } catch (err) {
-      throw err;
+      rethrow;
     }
   }
 
@@ -20,7 +20,8 @@ class HelperMethods {
     if (!prefs.containsKey('authData')) {
       return null;
     }
-    return await json.decode(prefs.getString('authData')!)
-        as Map<String, dynamic>;
+    final Map<String, dynamic> decodedAuthData =
+        await json.decode(prefs.getString('authData')!);
+    return decodedAuthData;
   }
 }

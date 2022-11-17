@@ -47,6 +47,7 @@ class Auth extends ChangeNotifier {
       }
       _token = extractedData['Data']['Jwt'];
       final userTokenData = Jwt.parseJwt(_token!);
+      print(userTokenData);
       _userId = userTokenData['Id'];
       _expiryDate = DateTime.now().add(
         Duration(

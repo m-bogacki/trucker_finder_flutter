@@ -10,9 +10,9 @@ import 'package:trucker_finder/screens/trucks_screen.dart';
 import 'package:trucker_finder/screens/userManagement/user_details_screen.dart';
 import './screens/auth/welcome_screen.dart';
 import './screens/auth/login_screen.dart';
-import './screens/auth/addUser_screen.dart';
+import './screens/auth/add_user_screen.dart';
 import './screens/home_screen.dart';
-import './screens/userManagement/accounts_screen.dart';
+import './screens/userManagement/manage_users_screen.dart';
 import 'providers/user_provider.dart';
 import 'providers/auth_provider.dart';
 
@@ -45,8 +45,8 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             textTheme: Theme.of(context).textTheme.copyWith(),
             colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: const Color(ThemeColors.PrimaryColor),
-                secondary: const Color(ThemeColors.AccentColor)),
+                primary: const Color(ThemeHelpers.PrimaryColor),
+                secondary: const Color(ThemeHelpers.AccentColor)),
           ),
           home: auth.isAuth
               ? HomeScreen()
@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
             AddUserScreen.routeName: (ctx) => AddUserScreen(),
             TrucksScreen.routeName: (ctx) => TrucksScreen(),
             TruckDetailsScreen.routeName: (ctx) => TruckDetailsScreen(),
-            AccountsScreen.routeName: (ctx) => AccountsScreen(),
+            ManageUsersScreen.routeName: (ctx) => ManageUsersScreen(),
             PasswordResetScreen.routeName: (ctx) => PasswordResetScreen(),
             UserDetailsScreen.routeName: (ctx) => UserDetailsScreen()
           },

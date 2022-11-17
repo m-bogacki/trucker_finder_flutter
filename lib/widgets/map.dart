@@ -45,7 +45,7 @@ class _MapState extends State<Map> {
             options: MapOptions(
               center: LatLng(latitude, longitude),
               zoom: 6.0,
-              maxZoom: 15.0,
+              maxZoom: 18.0,
               minZoom: 4.0,
               enableScrollWheel: true,
               interactiveFlags:

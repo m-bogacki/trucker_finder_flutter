@@ -3,8 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:trucker_finder/screens/trucks_screen.dart';
-import 'package:trucker_finder/screens/userManagement/accounts_screen.dart';
+import 'package:trucker_finder/screens/userManagement/manage_users_screen.dart';
 import 'package:trucker_finder/screens/userManagement/user_details_screen.dart';
+import '../providers/users_provider.dart';
 
 import '../providers/auth_provider.dart';
 
@@ -29,15 +30,24 @@ class AppDrawer extends StatelessWidget {
               title: const Text('Manage accounts'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, AccountsScreen.routeName);
+                Navigator.pushNamed(context, ManageUsersScreen.routeName);
               },
             ),
             ListTile(
               leading: const Icon(Icons.account_circle_rounded),
               title: const Text('My account'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, UserDetailsScreen.routeName);
+              onTap: () async {
+                final currentUser =
+                    await Provider.of<Users>(context, listen: false)
+                        .getCurrentUser();
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(
+                    context,
+                    UserDetailsScreen.routeName,
+                    arguments: currentUser?.id,
+                  );
+                }
               },
             ),
             ListTile(

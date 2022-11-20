@@ -1,15 +1,17 @@
-String normalizeText(String text) {
-  text = text.trim().replaceAllMapped(RegExp(r'[^A-Za-z0-9]'), (m) {
-    return '';
-  });
-  return text;
-}
-
-bool containSpecialCharacters(String text, bool numbers) {
-  String regexedValue =
-      text.replaceAll(RegExp('[^A-Za-z${numbers ? '0-9' : ''}]'), '');
-  if (regexedValue.length != text.length) {
-    return true;
+abstract class FormHelpers {
+  static String normalizeText(String text) {
+    text = text.trim().replaceAllMapped(RegExp(r'[^A-Za-z0-9]'), (m) {
+      return '';
+    });
+    return text;
   }
-  return false;
+
+  static bool containSpecialCharacters(String text, bool numbers) {
+    String regexedValue =
+        text.replaceAll(RegExp('[^A-Za-z${numbers ? '0-9' : ''}]'), '');
+    if (regexedValue.length != text.length) {
+      return true;
+    }
+    return false;
+  }
 }

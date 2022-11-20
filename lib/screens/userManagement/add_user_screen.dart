@@ -54,7 +54,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
     return Scaffold(
       appBar: AuthAppBar('Add user'),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: ThemeHelpers.customSpinner)
           : SingleChildScrollView(
               child: Form(
                 key: _form,
@@ -72,7 +72,8 @@ class _AddUserScreenState extends State<AddUserScreen> {
                           if (value.length < 6 && value.length > 25) {
                             return 'Login must contain at least 6 characters.';
                           }
-                          if (containSpecialCharacters(value, true)) {
+                          if (FormHelpers.containSpecialCharacters(
+                              value, true)) {
                             return 'Login shouldn\'t contain any special characters.';
                           }
                           return null;
@@ -163,7 +164,8 @@ class _AddUserScreenState extends State<AddUserScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Email field can\'t be empty.';
                           }
-                          if (containSpecialCharacters(value, false)) {
+                          if (FormHelpers.containSpecialCharacters(
+                              value, false)) {
                             return 'Last shouldn\'t contain any special characters.';
                           }
                           return null;
@@ -178,7 +180,8 @@ class _AddUserScreenState extends State<AddUserScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Email field can\'t be empty.';
                           }
-                          if (containSpecialCharacters(value, false)) {
+                          if (FormHelpers.containSpecialCharacters(
+                              value, false)) {
                             return 'Last shouldn\'t contain any special characters.';
                           }
                           return null;
@@ -226,7 +229,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
                         style: ButtonStyle(
                             fixedSize: MaterialStateProperty.all(Size(300, 45)),
                             backgroundColor: MaterialStateProperty.all(
-                                const Color(ThemeHelpers.PrimaryColor))),
+                                const Color(ThemeHelpers.primaryColor))),
                         child: const Text(
                           'Create',
                           style: TextStyle(fontSize: 18, color: Colors.white),

@@ -29,7 +29,7 @@ class WelcomeScreen extends StatelessWidget {
                         fixedSize:
                             MaterialStateProperty.all(const Size(300, 45)),
                         backgroundColor: MaterialStateProperty.all(
-                            const Color(ThemeHelpers.PrimaryColor))),
+                            const Color(ThemeHelpers.primaryColor))),
                     child: const Text(
                       'Login',
                       style: TextStyle(fontSize: 18, color: Colors.white),

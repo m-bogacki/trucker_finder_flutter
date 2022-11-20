@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../helpers/theme_helpers.dart';
+import '../../helpers/theme_helpers.dart';
 
 class CustomButton extends StatelessWidget {
   CustomButton({required this.action, required this.text});
@@ -13,7 +13,7 @@ class CustomButton extends StatelessWidget {
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(const Size(300, 45)),
         backgroundColor: MaterialStateProperty.all(
-          const Color(ThemeHelpers.PrimaryColor),
+          const Color(ThemeHelpers.primaryColor),
         ),
       ),
       child: Text(

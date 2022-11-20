@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../providers/user_provider.dart';
-import '../providers/users_provider.dart';
-import '../helpers/theme_helpers.dart';
+import '../../providers/user_provider.dart';
+import '../../providers/users_provider.dart';
+import '../../helpers/theme_helpers.dart';
 import 'package:provider/provider.dart';
 
 class UserDeletionDialog extends StatelessWidget {
   const UserDeletionDialog({
     Key? key,
     required this.user,
-  });
+  }) : super(key: key);
 
   final User user;
 
@@ -36,12 +36,12 @@ class UserDeletionDialog extends StatelessWidget {
                     clipBehavior: Clip.hardEdge,
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(
-                          width: 2.0, color: Color(ThemeHelpers.PrimaryColor)),
+                          width: 2.0, color: Color(ThemeHelpers.primaryColor)),
                     ),
                     child: const Text(
                       'No',
                       style: TextStyle(
-                        color: Color(ThemeHelpers.PrimaryColor),
+                        color: Color(ThemeHelpers.primaryColor),
                       ),
                     ),
                   ),
@@ -53,7 +53,7 @@ class UserDeletionDialog extends StatelessWidget {
                     },
                     clipBehavior: Clip.hardEdge,
                     style: TextButton.styleFrom(
-                      backgroundColor: Color(ThemeHelpers.PrimaryColor),
+                      backgroundColor: Color(ThemeHelpers.primaryColor),
                     ),
                     child: const Text(
                       'Yes',

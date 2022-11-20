@@ -2,12 +2,13 @@ import 'package:flutter/gestures.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:trucker_finder/screens/trucks_screen.dart';
+import 'package:trucker_finder/providers/logged_user_provider.dart';
+import 'package:trucker_finder/screens/trucks/manage_trucks_screen.dart';
 import 'package:trucker_finder/screens/userManagement/manage_users_screen.dart';
-import 'package:trucker_finder/screens/userManagement/user_details_screen.dart';
-import '../providers/users_provider.dart';
+import 'package:trucker_finder/screens/userManagement/my_account_screen.dart';
+import '../../providers/user_provider.dart';
 
-import '../providers/auth_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -22,7 +23,7 @@ class AppDrawer extends StatelessWidget {
               title: const Text('Trucks'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, TrucksScreen.routeName);
+                Navigator.pushNamed(context, ManageTrucksScreen.routeName);
               },
             ),
             ListTile(
@@ -37,16 +38,14 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.account_circle_rounded),
               title: const Text('My account'),
               onTap: () async {
-                final currentUser =
-                    await Provider.of<Users>(context, listen: false)
-                        .getCurrentUser();
+                User? currentUser =
+                    Provider.of<LoggedUser>(context, listen: false);
                 if (context.mounted) {
                   Navigator.pop(context);
-                  Navigator.pushNamed(
-                    context,
-                    UserDetailsScreen.routeName,
-                    arguments: currentUser?.id,
-                  );
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MyAccountScreen()));
                 }
               },
             ),

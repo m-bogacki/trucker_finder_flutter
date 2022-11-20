@@ -2,25 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
+import 'package:trucker_finder/providers/logged_user_provider.dart';
 import 'package:trucker_finder/providers/trucks_provider.dart';
 import './providers/users_provider.dart';
 import 'package:trucker_finder/screens/auth/password_reset_screen.dart';
-import 'package:trucker_finder/screens/truck_details_screen.dart';
-import 'package:trucker_finder/screens/trucks_screen.dart';
+import 'package:trucker_finder/screens/trucks/truck_details_screen.dart';
+import 'package:trucker_finder/screens/trucks/manage_trucks_screen.dart';
 import 'package:trucker_finder/screens/userManagement/user_details_screen.dart';
 import './screens/auth/welcome_screen.dart';
 import './screens/auth/login_screen.dart';
-import './screens/auth/add_user_screen.dart';
+import 'screens/userManagement/add_user_screen.dart';
 import './screens/home_screen.dart';
 import './screens/userManagement/manage_users_screen.dart';
-import 'providers/user_provider.dart';
 import 'providers/auth_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  runApp(MyApp());
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -38,16 +40,18 @@ class MyApp extends StatelessWidget {
           create: (_) => Users(null),
           update: (context, auth, previousUsers) => Users(auth.token),
         ),
+        ChangeNotifierProxyProvider<Auth, LoggedUser>(
+          create: (_) => LoggedUser('', '', ''),
+          update: (context, auth, previousUsers) => LoggedUser(
+              auth.loggedUser?.id ?? '',
+              auth.loggedUser?.firstName ?? '',
+              auth.loggedUser?.lastName ?? ''),
+        ),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
           title: 'Trucker Finder',
-          theme: ThemeData(
-            textTheme: Theme.of(context).textTheme.copyWith(),
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: const Color(ThemeHelpers.PrimaryColor),
-                secondary: const Color(ThemeHelpers.AccentColor)),
-          ),
+          theme: ThemeHelpers.customThemeData(context),
           home: auth.isAuth
               ? HomeScreen()
               : FutureBuilder(
@@ -56,7 +60,7 @@ class MyApp extends StatelessWidget {
                       authResultSnapshot.connectionState ==
                               ConnectionState.waiting
                           ? const Center(
-                              child: CircularProgressIndicator(),
+                              child: ThemeHelpers.customSpinner,
                             )
                           : const WelcomeScreen(),
                 ),
@@ -64,8 +68,8 @@ class MyApp extends StatelessWidget {
             HomeScreen.routeName: (ctx) => HomeScreen(),
             LoginScreen.routeName: (ctx) => LoginScreen(),
             AddUserScreen.routeName: (ctx) => AddUserScreen(),
-            TrucksScreen.routeName: (ctx) => TrucksScreen(),
-            TruckDetailsScreen.routeName: (ctx) => TruckDetailsScreen(),
+            ManageTrucksScreen.routeName: (ctx) => const ManageTrucksScreen(),
+            TruckDetailsScreen.routeName: (ctx) => const TruckDetailsScreen(),
             ManageUsersScreen.routeName: (ctx) => ManageUsersScreen(),
             PasswordResetScreen.routeName: (ctx) => PasswordResetScreen(),
             UserDetailsScreen.routeName: (ctx) => UserDetailsScreen()

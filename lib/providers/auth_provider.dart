@@ -1,18 +1,19 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trucker_finder/providers/logged_user_provider.dart';
 
 class Auth extends ChangeNotifier {
   String? _token;
   DateTime? _expiryDate;
   String? _userId;
   Timer? _authTimer;
+  LoggedUser? loggedUser;
 
   bool get isAuth {
     return token != null;
@@ -46,9 +47,10 @@ class Auth extends ChangeNotifier {
         throw HttpException(extractedData['Errors']['Message'][0]);
       }
       _token = extractedData['Data']['Jwt'];
-      final userTokenData = Jwt.parseJwt(_token!);
-      print(userTokenData);
-      _userId = userTokenData['Id'];
+      final jwtData = Jwt.parseJwt(_token!);
+      loggedUser =
+          LoggedUser(jwtData['Id'], jwtData['FirstName'], jwtData['LastName']);
+      _userId = jwtData['Id'];
       _expiryDate = DateTime.now().add(
         Duration(
           milliseconds: extractedData['Data']['ExpireTimeInMs'],
@@ -64,8 +66,8 @@ class Auth extends ChangeNotifier {
           },
         ),
       );
-      _autoLogout();
       notifyListeners();
+      _autoLogout();
     } catch (error) {
       print('Auth Provider $error');
       throw error;
@@ -73,6 +75,7 @@ class Auth extends ChangeNotifier {
   }
 
   Future<bool> tryAutoLogin() async {
+    print('Trying');
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('authData')) {
       return false;
@@ -84,10 +87,13 @@ class Auth extends ChangeNotifier {
       return false;
     }
     _token = extractedAuthData['token'];
-    _userId = Jwt.parseJwt(_token!)['Id'];
+    final jwtData = Jwt.parseJwt(_token!);
+    loggedUser =
+        LoggedUser(jwtData['Id'], jwtData['FirstName'], jwtData['LastName']);
+    _userId = extractedAuthData['Id'];
     _expiryDate = expiryDate;
-    notifyListeners();
     _autoLogout();
+    notifyListeners();
     return true;
   }
 

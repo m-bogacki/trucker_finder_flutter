@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
+import 'package:trucker_finder/providers/logged_user_provider.dart';
 import 'package:trucker_finder/widgets/auth/auth_appBar.dart';
-import '../widgets/map.dart';
-import '../widgets/app_drawer.dart';
+import 'package:trucker_finder/widgets/home_screen/home_screen_body.dart';
+import '../widgets/map/map.dart';
+import '../widgets/ui_elements/app_drawer.dart';
 import '../providers/users_provider.dart';
 import '../providers/user_provider.dart';
-import '../widgets/auth/avatar.dart';
+import '../widgets/ui_elements/avatar.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
@@ -17,82 +19,53 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  User? _currentUser;
-  List widgets = [
-    const Center(
-      child: Text("test"),
-    ),
+  List<Widget> widgets = [
+    HomeScreenBody(),
     Map(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<Users>(context, listen: false);
-    return FutureBuilder(
-      future: userProvider.getCurrentUser(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-        _currentUser = snapshot.data as User?;
-
-        if (_currentUser == null) {
-          return Scaffold(
-            appBar: AuthAppBar('Connection Error'),
-            body: const Center(
-              child: Text(
-                  'There is some connection issue, please try again later.'),
-            ),
-          );
-        }
-
-        return ChangeNotifierProvider<User>.value(
-          value: _currentUser!,
-          child: Scaffold(
-            appBar: AppBar(
-              title: Consumer<User>(
-                builder: (ctx, user, _) => Text(_currentIndex == 0
-                    ? 'Hello ${user.firstName}'
-                    : 'Your trucks'),
-              ),
-              centerTitle: false,
-              actions: [
-                Avatar(23),
-                const SizedBox(
-                  width: 10,
-                ),
-              ],
-            ),
-            body: widgets[_currentIndex],
-            bottomNavigationBar: BottomNavigationBar(
-              fixedColor: const Color(ThemeHelpers.PrimaryColor),
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              items: const [
-                BottomNavigationBarItem(
-                  label: 'Home',
-                  icon: Icon(Icons.home_outlined),
-                  activeIcon: Icon(Icons.home),
-                ),
-                BottomNavigationBarItem(
-                  label: 'Map',
-                  icon: Icon(Icons.map_outlined),
-                  activeIcon: Icon(Icons.map),
-                ),
-              ],
-            ),
-            drawer: AppDrawer(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Consumer<LoggedUser>(builder: (ctx, user, _) {
+          return Text(
+              _currentIndex == 0 ? 'Hello ${user.firstName}' : 'Your trucks');
+        }),
+        centerTitle: false,
+        actions: [
+          Consumer<LoggedUser>(builder: (ctx, user, _) => Avatar(23, user)),
+          const SizedBox(
+            width: 10,
           ),
-        );
-      },
+        ],
+      ),
+      body: IndexedStack(
+          children: widgets,
+          index: _currentIndex,
+          clipBehavior: Clip.antiAliasWithSaveLayer),
+      bottomNavigationBar: BottomNavigationBar(
+        fixedColor: const Color(ThemeHelpers.primaryColor),
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            label: 'Home',
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+          ),
+          BottomNavigationBarItem(
+            label: 'Map',
+            icon: Icon(Icons.map_outlined),
+            activeIcon: Icon(Icons.map),
+          ),
+        ],
+      ),
+      drawer: AppDrawer(),
     );
   }
 }

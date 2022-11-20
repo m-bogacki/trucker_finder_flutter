@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -19,40 +20,50 @@ class Users with ChangeNotifier {
   }
 
   Future<User?> getCurrentUser() async {
+    if (_currentUser != null) return _currentUser;
+
     final authData = await HelperMethods.getStorageAuthData();
     if (authData == null) {
       return null;
     }
     final userId = authData['userId'];
-    _currentUser = _currentUser ?? await getUserById(userId);
+    _currentUser = await fetchUserById(userId);
+
     return _currentUser;
   }
 
-  Future<User?> getUserById(String userId) async {
-    await fetchAndSetUsers();
-    User? user;
+  Future<User?> fetchUserById(String userId) async {
     try {
-      user = _users.firstWhere((user) => user.id == userId);
-    } catch (error) {
-      Uri url = Uri.parse('${constants.appUrl}/User/${userId}');
+      User? presentUser = getUserById(userId);
+      if (presentUser != null) _users.remove(presentUser);
+      Uri url = Uri.parse('${constants.appUrl}/User/$userId');
       final response = await http.get(url);
       final decodedResponse = jsonDecode(response.body);
       final fetchedUserData = decodedResponse['Data'];
       final fetchedUserId = fetchedUserData['UserPermissions'][0]['UserId'];
-      user = User(fetchedUserId, fetchedUserData['FirstName'],
+      User? user = User(fetchedUserId, fetchedUserData['FirstName'],
           fetchedUserData['LastName']);
+      _users.add(user);
+      return user;
+    } catch (error) {
+      rethrow;
     }
+  }
+
+  User? getUserById(String userId) {
+    User? user;
+    final matchedUsers = _users.where((user) => user.id == userId);
+    if (matchedUsers.isEmpty) return null;
+    user = matchedUsers.first;
     return user;
   }
 
   Future<void> fetchAndSetUsers() async {
     List<User> newUsers = [];
     final authData = await HelperMethods.getStorageAuthData();
-    if (authData == null) {
-      return null;
-    }
+    if (authData == null) return;
     final userId = authData['userId'];
-    Uri url = Uri.parse('${constants.appUrl}/User/GetUserList/${userId}');
+    Uri url = Uri.parse('${constants.appUrl}/User/GetUserList/$userId');
     final response = await http.get(url);
     final responseData = jsonDecode(response.body)['Data'];
     for (var value in responseData) {
@@ -105,7 +116,38 @@ class Users with ChangeNotifier {
       _users.removeWhere((user) => user.id == userId);
       notifyListeners();
     } catch (error) {
-      print(error);
+      rethrow;
     }
+  }
+
+  Future<void> updateUser(
+      String userId, Map<String, dynamic> userDetails) async {
+    final user = getUserById(userId);
+    if (user == null) return;
+    try {
+      final url = Uri.parse('http://api.truckerfinder.pl/api/User/UpdateUser');
+      final response = await http.put(url,
+          body: json.encode(userDetails),
+          headers: {
+            "Accept": "application/json",
+            "content-type": "application/json"
+          });
+      final extractedData = json.decode(response.body);
+      if (extractedData['Errors'] != null) {
+        throw HttpException(extractedData['Errors']['Message'][0]);
+      }
+      _users.remove(user);
+      _users.add(
+        User(
+          user.id,
+          userDetails['FirstName'],
+          userDetails['LastName'],
+        ),
+      );
+    } catch (error) {
+      log(error.toString());
+      rethrow;
+    }
+    notifyListeners();
   }
 }

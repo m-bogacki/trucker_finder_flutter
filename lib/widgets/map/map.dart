@@ -3,9 +3,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-import '../providers/trucks_provider.dart';
+import 'package:trucker_finder/helpers/theme_helpers.dart';
+import '../../providers/trucks_provider.dart';
 import 'package:geolocator/geolocator.dart';
-import '../helpers/localization.dart';
+import '../../helpers/localization.dart';
 
 class Map extends StatefulWidget {
   @override
@@ -37,7 +38,7 @@ class _MapState extends State<Map> {
         future: Localization.determinePosition(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: ThemeHelpers.customSpinner);
           }
           final latitude = snapshot.data?.latitude ?? 52.40;
           final longitude = snapshot.data?.longitude ?? 16.93;

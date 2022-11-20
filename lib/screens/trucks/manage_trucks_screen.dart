@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trucker_finder/providers/trucks_provider.dart';
 
-class TrucksScreen extends StatelessWidget {
+import '../../helpers/theme_helpers.dart';
+
+class ManageTrucksScreen extends StatelessWidget {
   static const routeName = '/trucks';
+
+  const ManageTrucksScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +20,7 @@ class TrucksScreen extends StatelessWidget {
         future: trucksProvider.getTrucksPositions(),
         builder: (context, dataSnapshot) {
           if (dataSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: ThemeHelpers.customSpinner);
           } else {
             if (dataSnapshot.error != null) {
               return const Center(

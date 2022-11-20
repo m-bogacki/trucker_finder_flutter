@@ -6,7 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
 import '../models/truck.dart';
-import '../widgets/truck_bottom_modal.dart';
+import '../widgets/ui_elements/truck_bottom_modal.dart';
 
 class Trucks with ChangeNotifier {
   String? authToken;
@@ -95,7 +95,7 @@ class Trucks with ChangeNotifier {
                   )
                 ],
                 shape: BoxShape.circle,
-                color: Color(ThemeHelpers.AccentColor),
+                color: Color(ThemeHelpers.accentColor),
               ),
               child: const Icon(
                 FontAwesomeIcons.truckFront,

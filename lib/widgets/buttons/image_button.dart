@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../providers/user_provider.dart';
-import '../helpers/theme_helpers.dart';
-import '../helpers/helper_methods.dart';
+import '../../providers/user_provider.dart';
+import '../../helpers/theme_helpers.dart';
+import '../../helpers/helper_methods.dart';
 
 class ImageButton extends StatelessWidget {
   const ImageButton(
@@ -20,7 +20,7 @@ class ImageButton extends StatelessWidget {
       padding: const EdgeInsets.all(6),
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
-        color: Color(ThemeHelpers.PrimaryColor),
+        color: Color(ThemeHelpers.primaryColor),
       ),
       child: IconButton(
         onPressed: () async {

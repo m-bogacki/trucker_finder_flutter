@@ -31,12 +31,12 @@ class _LoginScreenState extends State<LoginScreen> {
           _isLoading = true;
         });
         await Provider.of<Auth>(context, listen: false).login(_loginForm);
-        setState(() {
-          _isLoading = false;
-        });
         if (context.mounted) {
           Navigator.pop(context);
         }
+        setState(() {
+          _isLoading = false;
+        });
       } catch (error) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('$error')));
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AuthAppBar('Login'),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: ThemeHelpers.customSpinner)
           : SingleChildScrollView(
               child: Form(
                 key: _form,

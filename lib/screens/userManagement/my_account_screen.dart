@@ -9,14 +9,14 @@ import 'package:trucker_finder/widgets/buttons/custom_button.dart';
 import '../../widgets/buttons/image_button.dart';
 import '../../widgets/ui_elements/rounded_gradient_border.dart';
 
-class UserDetailsScreen extends StatefulWidget {
+class MyAccountScreen extends StatefulWidget {
   static const routeName = '/user-details';
 
   @override
-  State<UserDetailsScreen> createState() => _UserDetailsScreenState();
+  State<MyAccountScreen> createState() => _MyAccountScreenState();
 }
 
-class _UserDetailsScreenState extends State<UserDetailsScreen> {
+class _MyAccountScreenState extends State<MyAccountScreen> {
   final form = GlobalKey<FormState>();
   bool isLoading = false;
   final Map<String, dynamic> userData = {
@@ -27,24 +27,12 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String editedUserId = ModalRoute.of(context)!.settings.arguments as String;
-    final usersProvider = Provider.of<Users>(context, listen: false);
-    User? currentUser = usersProvider.getUserById(editedUserId);
-    if (currentUser == null) {
-      return const Scaffold(
-        body: Center(
-          child: Text('Sorry I couldn\'t load this user)'),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('User details'),
       ),
-      body: ChangeNotifierProvider<User>.value(
-        value: currentUser,
-        builder: (context, user) => Form(
+      body: Consumer<LoggedUser>(
+        builder: (context, loggedUser, _) => Form(
           key: form,
           child: Padding(
             padding:
@@ -58,14 +46,13 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     RoundedGradientBorder(
-                      child: Consumer<User>(
-                          builder: (ctx, user, _) => Avatar(50, currentUser)),
+                      child: Avatar(50, loggedUser),
                     ),
                     const SizedBox(width: 30),
                     Row(
                       children: [
                         ImageButton(
-                          currentUser: currentUser,
+                          currentUser: loggedUser,
                           imageSource: ImageSource.camera,
                           icon: Icons.camera_alt,
                         ),
@@ -73,7 +60,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                           width: 30,
                         ),
                         ImageButton(
-                          currentUser: currentUser,
+                          currentUser: loggedUser,
                           imageSource: ImageSource.gallery,
                           icon: Icons.image_search,
                         ),
@@ -86,12 +73,12 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 ),
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'First Name'),
-                  initialValue: currentUser.firstName,
+                  initialValue: loggedUser.firstName,
                   onSaved: (value) => userData['FirstName'] = value,
                 ),
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'Last Name'),
-                  initialValue: currentUser.lastName,
+                  initialValue: loggedUser.lastName,
                   onSaved: (value) => userData['LastName'] = value,
                 ),
                 const SizedBox(
@@ -102,16 +89,17 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   action: () async {
                     try {
                       form.currentState?.save();
-                      userData['UserId'] = currentUser.id;
+                      userData['UserId'] = loggedUser.id;
                       setState(() {
                         isLoading = true;
                       });
-                      await usersProvider.updateUser(currentUser.id, userData);
+                      await Provider.of<LoggedUser>(context, listen: false)
+                          .updateLoggedUser(userData);
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              'Successfully saved ${currentUser.firstName} data',
+                              'Successfully saved ${loggedUser.firstName} data',
                             ),
                           ),
                         );

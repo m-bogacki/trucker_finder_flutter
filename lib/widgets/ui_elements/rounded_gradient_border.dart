@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../helpers/theme_helpers.dart';
+import '../../helpers/theme_helpers.dart';
 
 class RoundedGradientBorder extends StatelessWidget {
   RoundedGradientBorder({required this.child});
@@ -13,8 +13,8 @@ class RoundedGradientBorder extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
-            Color(ThemeHelpers.PrimaryColor),
-            Color(ThemeHelpers.AccentColor)
+            Color(ThemeHelpers.primaryColor),
+            Color(ThemeHelpers.accentColor)
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomRight,

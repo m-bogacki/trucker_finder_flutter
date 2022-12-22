@@ -4,16 +4,17 @@ import 'package:provider/provider.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
 import 'package:trucker_finder/providers/logged_user_provider.dart';
 import 'package:trucker_finder/providers/trucks_provider.dart';
+import 'package:trucker_finder/screens/user_management/my_account_screen.dart';
 import './providers/users_provider.dart';
 import 'package:trucker_finder/screens/auth/password_reset_screen.dart';
 import 'package:trucker_finder/screens/trucks/truck_details_screen.dart';
 import 'package:trucker_finder/screens/trucks/manage_trucks_screen.dart';
-import 'package:trucker_finder/screens/userManagement/user_details_screen.dart';
+import 'package:trucker_finder/screens/user_management/user_details_screen.dart';
 import './screens/auth/welcome_screen.dart';
 import './screens/auth/login_screen.dart';
-import 'screens/userManagement/add_user_screen.dart';
+import 'screens/user_management/add_user_screen.dart';
 import './screens/home_screen.dart';
-import './screens/userManagement/manage_users_screen.dart';
+import './screens/user_management/manage_users_screen.dart';
 import 'providers/auth_provider.dart';
 
 void main() {
@@ -41,11 +42,14 @@ class MyApp extends StatelessWidget {
           update: (context, auth, previousUsers) => Users(auth.token),
         ),
         ChangeNotifierProxyProvider<Auth, LoggedUser>(
-          create: (_) => LoggedUser('', '', ''),
-          update: (context, auth, previousUsers) => LoggedUser(
-              auth.loggedUser?.id ?? '',
-              auth.loggedUser?.firstName ?? '',
-              auth.loggedUser?.lastName ?? ''),
+          create: (_) => LoggedUser('', '', '', 0),
+          update: (context, auth, previousUsers) =>
+              auth.loggedUser ??
+              LoggedUser(
+                  auth.loggedUser?.id ?? '',
+                  auth.loggedUser?.firstName ?? '',
+                  auth.loggedUser?.lastName ?? '',
+                  auth.loggedUser?.profile ?? 0),
         ),
       ],
       child: Consumer<Auth>(
@@ -69,10 +73,11 @@ class MyApp extends StatelessWidget {
             LoginScreen.routeName: (ctx) => LoginScreen(),
             AddUserScreen.routeName: (ctx) => AddUserScreen(),
             ManageTrucksScreen.routeName: (ctx) => const ManageTrucksScreen(),
-            TruckDetailsScreen.routeName: (ctx) => const TruckDetailsScreen(),
+            TruckDetailsScreen.routeName: (ctx) => TruckDetailsScreen(),
             ManageUsersScreen.routeName: (ctx) => ManageUsersScreen(),
             PasswordResetScreen.routeName: (ctx) => PasswordResetScreen(),
-            UserDetailsScreen.routeName: (ctx) => UserDetailsScreen()
+            UserDetailsScreen.routeName: (ctx) => UserDetailsScreen(),
+            MyAccountScreen.routeName: (ctx) => MyAccountScreen(),
           },
           debugShowCheckedModeBanner: false,
         ),

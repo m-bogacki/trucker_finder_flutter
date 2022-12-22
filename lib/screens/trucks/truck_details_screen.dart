@@ -1,15 +1,158 @@
-import 'package:flutter/material.dart';
-import '../../models/truck.dart';
+import 'dart:developer';
+import 'dart:io';
 
-class TruckDetailsScreen extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:trucker_finder/helpers/helper_methods.dart';
+import 'package:trucker_finder/helpers/theme_helpers.dart';
+import 'package:provider/provider.dart';
+import 'package:trucker_finder/providers/users_provider.dart';
+import 'package:trucker_finder/widgets/buttons/custom_button.dart';
+import 'package:trucker_finder/widgets/ui_elements/text_header.dart';
+import '../../providers/trucks_provider.dart';
+import '../../providers/user_provider.dart';
+import '../../widgets/ui_elements/avatar.dart';
+
+class TruckDetailsScreen extends StatefulWidget {
   static const routeName = '/truck-details';
 
-  const TruckDetailsScreen({Key? key}) : super(key: key);
+  @override
+  State<TruckDetailsScreen> createState() => _TruckDetailsScreenState();
+}
+
+class _TruckDetailsScreenState extends State<TruckDetailsScreen> {
   @override
   Widget build(BuildContext context) {
-    var settings = ModalRoute.of(context)?.settings.arguments;
+    final _form = GlobalKey<FormState>();
+    int truckId = ModalRoute.of(context)?.settings.arguments as int;
+    Map<String, dynamic> truckerAssignData = {
+      "userId": null,
+      "truckId": truckId
+    };
+    final usersProvider = Provider.of<Users>(context, listen: false);
+    final trucksProvider = Provider.of<Trucks>(context, listen: false);
+    final editedTruck = trucksProvider.getTruckById(truckId);
+    User? trucker;
+    if (editedTruck.trucker != null) {
+      trucker = usersProvider.getUserById(editedTruck.trucker!);
+    }
+
+    List<DropdownMenuItem<String>> options =
+        HelperMethods.createDropdownFromUserList(
+            usersProvider.getUsersByProfile('User'));
+
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('Truck ${editedTruck.truckId}'),
+      ),
+      body: Column(
+        children: [
+          editedTruck.trucker != null && trucker != null
+              ? Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: 2,
+                        color: Color(ThemeHelpers.accentColor),
+                      ),
+                    ),
+                    color: Color(ThemeHelpers.primaryColor),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 5),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Avatar(40, trucker),
+                            Text(
+                              '${trucker.firstName} ${trucker.lastName}',
+                              style: const TextStyle(
+                                fontFamily: 'OpenSans',
+                                fontSize: 24,
+                                color: Color(ThemeHelpers.thirdColor),
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                      ],
+                    ),
+                  ),
+                )
+              : const SizedBox(
+                  height: 0,
+                ),
+          const SizedBox(height: 30),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextHeader(
+                  text: 'Register number: ${editedTruck.registerNumber}'),
+              TextHeader(
+                  text:
+                      'Ignition state: ${editedTruck.ignitionState ? 'On' : 'Off'}'),
+              TextHeader(text: 'Speed: ${editedTruck.speed}'),
+              TextHeader(
+                  text:
+                      'Heading: ${HelperMethods.getTruckDirection(editedTruck.heading)}'),
+              TextHeader(
+                  text: 'Last update: ${DateTime.parse(editedTruck.dateTime)}'),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 80),
+            child: Form(
+              key: _form,
+              child: Column(
+                children: [
+                  DropdownButtonFormField(
+                    validator: (value) {
+                      if (value == null)
+                        return 'You must select trucker to assign';
+                    },
+                    hint: Text('Select trucker'),
+                    items: options,
+                    onChanged: (value) {
+                      truckerAssignData.update(
+                          'userId', (attribute) => attribute = value);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CustomButton(
+                      action: () async {
+                        if (_form.currentState!.validate()) {
+                          try {
+                            _form.currentState?.save();
+                            await trucksProvider
+                                .assignTrucker(truckerAssignData);
+                          } catch (error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Couldn\'t assign trucker. Check if user isn\'t assigned to other truck.'),
+                              ),
+                            );
+                          }
+                          if (context.mounted) Navigator.pop(context);
+
+                          setState(() {});
+                        }
+                      },
+                      text: ('Assign trucker'))
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

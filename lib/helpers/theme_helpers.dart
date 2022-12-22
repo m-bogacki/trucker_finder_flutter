@@ -44,4 +44,10 @@ abstract class ThemeHelpers {
   static const customSpinner = SpinKitFoldingCube(
     color: Color(accentColor),
   );
+
+  static const truckDetailsTextStyle = TextStyle(
+    color: Color(primaryColor),
+    fontSize: 22,
+    fontFamily: 'OpenSans',
+  );
 }

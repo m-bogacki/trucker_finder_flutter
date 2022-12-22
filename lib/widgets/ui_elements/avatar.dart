@@ -4,12 +4,22 @@ import '../../providers/user_provider.dart';
 class Avatar extends StatelessWidget {
   double radius;
   User user;
-  Avatar(@required this.radius, @required this.user);
+  Avatar(this.radius, this.user);
   @override
   Widget build(BuildContext context) {
     dynamic userImage = user.photo == null
-        ? const AssetImage('assets/images/blank-avatar.png')
-        : MemoryImage(user.photo!);
-    return CircleAvatar(radius: radius, backgroundImage: userImage);
+        ? Image.asset(
+            'assets/images/blank-avatar.png',
+            gaplessPlayback: true,
+            fit: BoxFit.fill,
+          )
+        : Image.memory(
+            user.photo!,
+            gaplessPlayback: true,
+            fit: BoxFit.fill,
+          );
+    return ClipOval(
+      child: SizedBox(width: radius * 2, height: radius * 2, child: userImage),
+    );
   }
 }

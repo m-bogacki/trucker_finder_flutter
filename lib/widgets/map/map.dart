@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
+import 'package:trucker_finder/providers/auth_provider.dart';
+import 'package:trucker_finder/providers/logged_user_provider.dart';
 import '../../providers/trucks_provider.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../helpers/localization.dart';
@@ -15,15 +17,19 @@ class Map extends StatefulWidget {
 
 class _MapState extends State<Map> {
   bool _isLoading = false;
-  Position? position;
   @override
   void initState() {
     setState(() {
       _isLoading = true;
     });
     Future.delayed(Duration.zero).then((_) async {
-      await Provider.of<Trucks>(context, listen: false).getTrucksPositions();
-      position = await Localization.determinePosition();
+      try {
+        final userId = Provider.of<LoggedUser>(context, listen: false).id;
+
+        await Provider.of<Trucks>(context, listen: false).fetchTrucks(userId);
+      } catch (error) {
+        rethrow;
+      }
     });
     setState(() {
       _isLoading = false;
@@ -39,6 +45,11 @@ class _MapState extends State<Map> {
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: ThemeHelpers.customSpinner);
+          }
+          if (snapshot.error != null) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
           }
           final latitude = snapshot.data?.latitude ?? 52.40;
           final longitude = snapshot.data?.longitude ?? 16.93;
@@ -66,9 +77,10 @@ class _MapState extends State<Map> {
 class TrucksMarkersLayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    String userId = Provider.of<LoggedUser>(context, listen: false).id;
     return Consumer<Trucks>(
       builder: (ctx, trucksProvider, _) => StreamBuilder<void>(
-        stream: trucksProvider.getTrucksPositionsForMap(),
+        stream: trucksProvider.fetchTrucksPositionsForMap(userId),
         builder: (context, snapshot) {
           return MarkerLayer(
             markers: trucksProvider.markers,

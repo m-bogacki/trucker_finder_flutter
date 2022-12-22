@@ -48,8 +48,15 @@ class Auth extends ChangeNotifier {
       }
       _token = extractedData['Data']['Jwt'];
       final jwtData = Jwt.parseJwt(_token!);
-      loggedUser =
-          LoggedUser(jwtData['Id'], jwtData['FirstName'], jwtData['LastName']);
+      print(_token);
+      print(jwtData['Id']);
+      loggedUser = LoggedUser(
+        jwtData['Id'],
+        jwtData['FirstName'],
+        jwtData['LastName'],
+        0,
+      );
+      await loggedUser?.refreshUserData();
       _userId = jwtData['Id'];
       _expiryDate = DateTime.now().add(
         Duration(
@@ -89,7 +96,8 @@ class Auth extends ChangeNotifier {
     _token = extractedAuthData['token'];
     final jwtData = Jwt.parseJwt(_token!);
     loggedUser =
-        LoggedUser(jwtData['Id'], jwtData['FirstName'], jwtData['LastName']);
+        LoggedUser(jwtData['Id'], jwtData['FirstName'], jwtData['LastName'], 0);
+    await loggedUser?.refreshUserData();
     _userId = extractedAuthData['Id'];
     _expiryDate = expiryDate;
     _autoLogout();

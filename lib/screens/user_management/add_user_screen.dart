@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:trucker_finder/helpers/form_helpers.dart';
 import '../../widgets/auth/auth_appBar.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
 import '../../providers/users_provider.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
@@ -207,6 +204,34 @@ class _AddUserScreenState extends State<AddUserScreen> {
                         onSaved: (value) =>
                             registrationData['PhoneNumber'] = value,
                       ),
+                      DropdownButtonFormField(
+                        validator: (value) {
+                          if (value == null) {
+                            return 'User must have role assigned';
+                          }
+                          return null;
+                        },
+                        decoration: const InputDecoration(labelText: 'Role*'),
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'Boss',
+                            child: Text('Boss'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'User',
+                            child: Text('User'),
+                          )
+                        ],
+                        onChanged: (value) {
+                          if (value == 'Boss') {
+                            registrationData.update(
+                                'Profile', (role) => role = 2);
+                          } else {
+                            registrationData.update(
+                                'Profile', (role) => role = 1);
+                          }
+                        },
+                      ),
                       const SizedBox(
                         height: 50,
                       ),
@@ -215,10 +240,16 @@ class _AddUserScreenState extends State<AddUserScreen> {
                           if (_form.currentState!.validate()) {
                             try {
                               await saveForm();
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text(
-                                      'Sucessfully created ${registrationData['email']}')));
-                              Navigator.pop(context);
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Sucessfully created ${registrationData['Email']} account',
+                                    ),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              }
                             } catch (error) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text('$error')));
@@ -227,7 +258,8 @@ class _AddUserScreenState extends State<AddUserScreen> {
                           }
                         },
                         style: ButtonStyle(
-                            fixedSize: MaterialStateProperty.all(Size(300, 45)),
+                            fixedSize:
+                                MaterialStateProperty.all(const Size(300, 45)),
                             backgroundColor: MaterialStateProperty.all(
                                 const Color(ThemeHelpers.primaryColor))),
                         child: const Text(

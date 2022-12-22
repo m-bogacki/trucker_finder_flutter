@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
-import 'package:trucker_finder/widgets/ui_elements/avatar.dart';
+import 'package:trucker_finder/providers/logged_user_provider.dart';
+import '../home_screen/truckers_horizontal_list.dart';
+import '../home_screen/active_trucks_home_page_section.dart';
 import '../../providers/users_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -9,66 +11,32 @@ class HomeScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Building');
+    final loggedUser = Provider.of<LoggedUser>(context, listen: false);
     return FutureBuilder(
-        future: Provider.of<Users>(context, listen: false).fetchAndSetUsers(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: ThemeHelpers.customSpinner);
-          }
-          return SingleChildScrollView(
+      future: Provider.of<Users>(context, listen: false).fetchAndSetUsers(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: ThemeHelpers.customSpinner);
+        }
+        return NotificationListener<OverscrollIndicatorNotification>(
+          onNotification: (overscroll) {
+            overscroll.disallowIndicator();
+            return true;
+          },
+          child: SingleChildScrollView(
             child: Column(
               children: [
-                Consumer<Users>(
-                  builder: (context, usersProvider, _) {
-                    return Container(
-                      padding: const EdgeInsets.only(top: 18),
-                      height: 120,
-                      decoration: const BoxDecoration(
-                        color: Color(ThemeHelpers.primaryColor),
-                        border: Border(
-                          bottom: BorderSide(
-                            width: 3,
-                            color: Color(ThemeHelpers.accentColor),
-                          ),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black54,
-                              blurRadius: 30.0,
-                              offset: Offset(0.0, 0.75))
-                        ],
+                const TruckersHorizontalList(),
+                loggedUser.profile == 2
+                    ? const ActiveTrucksHomePageSection()
+                    : const SizedBox(
+                        height: 20,
                       ),
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: usersProvider.users.length,
-                        itemBuilder: (context, index) {
-                          final currentUser = usersProvider.users[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 30),
-                            child: Column(
-                              children: [
-                                Avatar(30, currentUser),
-                                const SizedBox(height: 8),
-                                Text(
-                                  currentUser.firstName,
-                                  style: const TextStyle(
-                                      color: Color(ThemeHelpers.thirdColor),
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15,
-                                      letterSpacing: 0.5),
-                                )
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                )
               ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }

@@ -11,14 +11,7 @@ class RoundedGradientBorder extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            Color(ThemeHelpers.primaryColor),
-            Color(ThemeHelpers.accentColor)
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomRight,
-        ),
+        color: const Color(ThemeHelpers.accentColor),
         border: Border.all(
           color: Colors.transparent,
         ),

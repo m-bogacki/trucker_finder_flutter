@@ -1,19 +1,23 @@
-import 'package:flutter/material.dart';
-
 class Truck {
-  String? deviceId;
-  Map<String, dynamic>? coordinate;
-  Map<String, dynamic>? dateTime;
-  int? heading;
-  int? speed;
-  String? ignitionState;
+  int truckId;
+  String registerNumber;
+  double latitude;
+  double longitude;
+  String dateTime;
+  int heading;
+  int speed;
+  bool ignitionState;
+  String? trucker;
 
   Truck(
-    this.deviceId,
-    this.coordinate,
+    this.truckId,
+    this.registerNumber,
+    this.latitude,
+    this.longitude,
     this.dateTime,
     this.heading,
     this.speed,
     this.ignitionState,
+    this.trucker,
   );
 }

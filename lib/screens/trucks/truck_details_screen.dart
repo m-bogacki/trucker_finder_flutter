@@ -106,7 +106,7 @@ class _TruckDetailsScreenState extends State<TruckDetailsScreen> {
             height: 20,
           ),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 80),
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 60),
             child: Form(
               key: _form,
               child: Column(
@@ -126,27 +126,43 @@ class _TruckDetailsScreenState extends State<TruckDetailsScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  CustomButton(
-                      action: () async {
-                        if (_form.currentState!.validate()) {
-                          try {
-                            _form.currentState?.save();
-                            await trucksProvider
-                                .assignTrucker(truckerAssignData);
-                          } catch (error) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Couldn\'t assign trucker. Check if user isn\'t assigned to other truck.'),
-                              ),
-                            );
-                          }
-                          if (context.mounted) Navigator.pop(context);
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: 200,
+                        child: CustomButton(
+                            action: () async {
+                              if (_form.currentState!.validate()) {
+                                try {
+                                  _form.currentState?.save();
+                                  await trucksProvider
+                                      .assignTrucker(truckerAssignData);
+                                } catch (error) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Couldn\'t assign trucker. Check if user isn\'t assigned to other truck.'),
+                                    ),
+                                  );
+                                }
 
-                          setState(() {});
-                        }
-                      },
-                      text: ('Assign trucker'))
+                                setState(() {});
+                              }
+                            },
+                            text: ('Assign trucker')),
+                      ),
+                      editedTruck.trucker != null
+                          ? IconButton(
+                              onPressed: () async {
+                                await trucksProvider
+                                    .deleteTrucker(editedTruck.truckId);
+                                setState(() {});
+                              },
+                              icon: Icon(Icons.delete))
+                          : SizedBox()
+                    ],
+                  )
                 ],
               ),
             ),

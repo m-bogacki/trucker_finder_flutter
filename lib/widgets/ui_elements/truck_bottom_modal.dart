@@ -45,7 +45,7 @@ class TruckDetailsBottomModal extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Device ID: ${truck.truckId}',
+                      'Truck ID: ${truck.truckId}',
                       style: ThemeHelpers.truckDetailsTextStyle
                           .copyWith(fontSize: 20),
                     ),

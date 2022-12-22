@@ -39,6 +39,7 @@ class Trucks with ChangeNotifier {
     if (decodedResponse != null) {
       final trucksPositions = decodedResponse["Data"];
       for (var truckDevice in trucksPositions) {
+        print(truckDevice);
         final truck = Truck(
           truckDevice['TruckId'],
           truckDevice['RegisterNumber'],
@@ -148,6 +149,7 @@ class Trucks with ChangeNotifier {
             "Accept": "application/json",
             "content-type": "application/json",
           });
+      print(response.body);
       if (response.statusCode != 200)
         throw HttpException('Couldn\'t assign trucker');
       final truck = getTruckById(truckerData['truckId']);

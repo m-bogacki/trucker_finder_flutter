@@ -58,6 +58,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   itemCount: usersProvider.users.length,
                   itemBuilder: (ctx, index) {
                     final user = usersProvider.users[index];
+                    print(user.id);
                     return Dismissible(
                       key: Key(user.id ?? ''),
                       direction: DismissDirection.endToStart,

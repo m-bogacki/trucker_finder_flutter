@@ -1,8 +1,11 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
 import 'package:trucker_finder/providers/logged_user_provider.dart';
-import '../home_screen/truckers_horizontal_list.dart';
-import '../home_screen/active_trucks_home_page_section.dart';
+import 'package:trucker_finder/widgets/home_screen/trucker/truckers_events_containers.dart';
+import 'boss/truckers_horizontal_list.dart';
+import 'boss/active_trucks_home_page_section.dart';
 import '../../providers/users_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -25,14 +28,14 @@ class HomeScreenBody extends StatelessWidget {
           },
           child: SingleChildScrollView(
             child: Column(
-              children: [
-                const TruckersHorizontalList(),
-                loggedUser.profile == 2
-                    ? const ActiveTrucksHomePageSection()
-                    : const SizedBox(
-                        height: 20,
-                      ),
-              ],
+              children: loggedUser.profile == 2
+                  ? [
+                      const TruckersHorizontalList(),
+                      const ActiveTrucksHomePageSection(),
+                    ]
+                  : [
+                      const TruckerEventsContainers(),
+                    ],
             ),
           ),
         );

@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
 import 'package:trucker_finder/providers/logged_user_provider.dart';
-import 'package:trucker_finder/providers/user_provider.dart';
 import 'package:trucker_finder/widgets/home_screen/home_screen_body.dart';
 import '../widgets/map/map.dart';
-import '../widgets/ui_elements/app_drawer.dart';
+import '../widgets/home_screen/app_drawer.dart';
 import '../widgets/ui_elements/avatar.dart';
 
 class HomeScreen extends StatefulWidget {

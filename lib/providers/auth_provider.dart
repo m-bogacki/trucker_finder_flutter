@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
@@ -48,8 +49,6 @@ class Auth extends ChangeNotifier {
       }
       _token = extractedData['Data']['Jwt'];
       final jwtData = Jwt.parseJwt(_token!);
-      print(_token);
-      print(jwtData['Id']);
       loggedUser = LoggedUser(
         jwtData['Id'],
         jwtData['FirstName'],
@@ -76,7 +75,7 @@ class Auth extends ChangeNotifier {
       notifyListeners();
       _autoLogout();
     } catch (error) {
-      print('Auth Provider $error');
+      log('Auth Provider $error');
       throw error;
     }
   }

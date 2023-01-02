@@ -48,12 +48,12 @@ class UserDeletionDialog extends StatelessWidget {
                   TextButton(
                     onPressed: () async {
                       await Provider.of<Users>(context, listen: false)
-                          .deleteUser(user.id!);
+                          .deleteUser(user.id);
                       Navigator.pop(context);
                     },
                     clipBehavior: Clip.hardEdge,
                     style: TextButton.styleFrom(
-                      backgroundColor: Color(ThemeHelpers.primaryColor),
+                      backgroundColor: const Color(ThemeHelpers.primaryColor),
                     ),
                     child: const Text(
                       'Yes',

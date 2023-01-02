@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,9 +6,11 @@ import 'package:image_picker/image_picker.dart';
 import '../constants/constants.dart' as constants;
 import '../constants/constants.dart';
 import '../providers/user_provider.dart';
+import 'package:collection/collection.dart';
 
 class HelperMethods {
   static Future<Uint8List?> getPicture(ImageSource source) async {
+    // ignore: no_leading_underscores_for_local_identifiers
     final ImagePicker _picker = ImagePicker();
     try {
       final XFile? image = await _picker.pickImage(source: source);
@@ -84,11 +85,25 @@ class HelperMethods {
     for (var user in userList) {
       listToReturn.add(
         DropdownMenuItem(
-          child: Text('${user.firstName} ${user.lastName}'),
           value: user.id,
+          child: Text('${user.firstName} ${user.lastName}'),
         ),
       );
     }
+    return listToReturn;
+  }
+
+  static List<DropdownMenuItem<int>> createDropdownFromEventType() {
+    List<DropdownMenuItem<int>> listToReturn = [];
+    for (var event in EventType.values.toList()) {
+      listToReturn.add(
+        DropdownMenuItem(
+          value: event.index,
+          child: Text(event.name),
+        ),
+      );
+    }
+
     return listToReturn;
   }
 }

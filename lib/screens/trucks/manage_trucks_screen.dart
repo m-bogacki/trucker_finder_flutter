@@ -4,6 +4,7 @@ import 'package:trucker_finder/providers/logged_user_provider.dart';
 import 'package:trucker_finder/providers/trucks_provider.dart';
 import 'package:trucker_finder/screens/trucks/truck_details_screen.dart';
 import 'package:trucker_finder/widgets/ui_elements/avatar.dart';
+import 'package:collection/collection.dart';
 
 import '../../helpers/theme_helpers.dart';
 import '../../providers/user_provider.dart';
@@ -18,7 +19,7 @@ class ManageTrucksScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final trucksProvider = Provider.of<Trucks>(context, listen: false);
     final loggedUser = Provider.of<LoggedUser>(context, listen: false);
-    final usersProvider = Provider.of<Users>(context, listen: false);
+    final usersProvider = Provider.of<Users>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('All Trucks'),
@@ -42,9 +43,6 @@ class ManageTrucksScreen extends StatelessWidget {
                     if (trucks.trucks[i].trucker != null) {
                       truckUser =
                           usersProvider.getUserById(trucks.trucks[i].trucker!);
-                      usersProvider.users
-                          .firstWhere((user) => user == truckUser)
-                          .userTruck = null;
                       truckUser?.userTruck = trucks.trucks[i];
                     }
                     return Card(

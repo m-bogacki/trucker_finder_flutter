@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../ui_elements/text_header.dart';
-import '../../providers/trucks_provider.dart';
-import '../../helpers/theme_helpers.dart';
+import '../../ui_elements/text_header.dart';
+import '../../../providers/trucks_provider.dart';
+import '../../../helpers/theme_helpers.dart';
 
 class ActiveTrucksHomePageSection extends StatelessWidget {
   const ActiveTrucksHomePageSection({

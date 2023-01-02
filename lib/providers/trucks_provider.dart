@@ -9,7 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
 import '../models/truck.dart';
-import '../widgets/ui_elements/truck_bottom_modal.dart';
+import '../widgets/map/truck_bottom_modal.dart';
 
 class Trucks with ChangeNotifier {
   String? authToken;
@@ -39,7 +39,6 @@ class Trucks with ChangeNotifier {
     if (decodedResponse != null) {
       final trucksPositions = decodedResponse["Data"];
       for (var truckDevice in trucksPositions) {
-        print(truckDevice);
         final truck = Truck(
           truckDevice['TruckId'],
           truckDevice['RegisterNumber'],
@@ -67,10 +66,14 @@ class Trucks with ChangeNotifier {
             "content-type": "application/json",
             "Authorization": "bearer $authToken"
           });
+      print(userId);
+      print(response.body);
+
       extractTrucks(response);
+
       notifyListeners();
     } catch (error) {
-      print(error);
+      log(error.toString());
     }
   }
 
@@ -88,7 +91,7 @@ class Trucks with ChangeNotifier {
         notifyListeners();
       });
     } catch (error) {
-      print(error);
+      log(error.toString());
     }
   }
 
@@ -123,10 +126,6 @@ class Trucks with ChangeNotifier {
           ),
           onTap: () {
             showModalBottomSheet(
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(20),
-                      topLeft: Radius.circular(20))),
               context: context,
               builder: ((context) {
                 return TruckDetailsBottomModal(truck);
@@ -140,20 +139,21 @@ class Trucks with ChangeNotifier {
     _markers = markers;
   }
 
-  Future<void> assignTrucker(Map<String, dynamic> truckerData) async {
+  Future<void> assignTrucker(String userId, int truckId) async {
     try {
       final response = await http.put(
           Uri.parse(
-              'http://api.truckerfinder.pl/api/Truck/trucker?userId=${truckerData['userId']}&truckId=${truckerData['truckId']}'),
+              'http://api.truckerfinder.pl/api/Truck/trucker?userId=$userId&truckId=$truckId'),
           headers: {
             "Accept": "application/json",
             "content-type": "application/json",
           });
       print(response.body);
-      if (response.statusCode != 200)
-        throw HttpException('Couldn\'t assign trucker');
-      final truck = getTruckById(truckerData['truckId']);
-      truck.trucker = truckerData['userId'];
+      if (response.statusCode != 200) {
+        throw const HttpException('Couldn\'t assign trucker');
+      }
+      final truck = getTruckById(truckId);
+      truck.trucker = userId;
       trucks.remove(truck);
       trucks.add(truck);
       notifyListeners();
@@ -162,18 +162,20 @@ class Trucks with ChangeNotifier {
     }
   }
 
-  Future<void> deleteTrucker(int truckId) async {
+  Future<void> deleteTrucker(int truckId, String truckerId) async {
     try {
       final response = await http.delete(
         Uri.parse(
-            'http://api.truckerfinder.pl/api/Truck/trucker?truckId=$truckId'),
+            'http://api.truckerfinder.pl/api/Truck/trucker?truckId=$truckId&userId=$truckerId'),
         headers: {
           "Accept": "application/json",
           "content-type": "application/json",
         },
       );
-      if (response.statusCode != 200)
-        throw HttpException('Couldn\'t update trucker');
+      print(response.body);
+      if (response.statusCode != 200) {
+        throw const HttpException('Couldn\'t update trucker');
+      }
       final truck = getTruckById(truckId);
       truck.trucker = null;
       trucks.remove(truck);

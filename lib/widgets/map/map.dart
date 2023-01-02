@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
-import 'package:trucker_finder/providers/auth_provider.dart';
 import 'package:trucker_finder/providers/logged_user_provider.dart';
 import '../../providers/trucks_provider.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../helpers/localization.dart';
+import './trucks_markers_layer.dart';
 
 class Map extends StatefulWidget {
   @override
@@ -71,22 +71,5 @@ class _MapState extends State<Map> {
             ],
           );
         });
-  }
-}
-
-class TrucksMarkersLayer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    String userId = Provider.of<LoggedUser>(context, listen: false).id;
-    return Consumer<Trucks>(
-      builder: (ctx, trucksProvider, _) => StreamBuilder<void>(
-        stream: trucksProvider.fetchTrucksPositionsForMap(userId),
-        builder: (context, snapshot) {
-          return MarkerLayer(
-            markers: trucksProvider.markers,
-          );
-        },
-      ),
-    );
   }
 }

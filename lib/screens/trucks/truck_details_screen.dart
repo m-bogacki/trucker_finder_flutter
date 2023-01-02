@@ -24,18 +24,14 @@ class _TruckDetailsScreenState extends State<TruckDetailsScreen> {
   Widget build(BuildContext context) {
     final _form = GlobalKey<FormState>();
     int truckId = ModalRoute.of(context)?.settings.arguments as int;
-    Map<String, dynamic> truckerAssignData = {
-      "userId": null,
-      "truckId": truckId
-    };
-    final usersProvider = Provider.of<Users>(context, listen: false);
+    String? truckUserId;
+    final usersProvider = Provider.of<Users>(context);
     final trucksProvider = Provider.of<Trucks>(context, listen: false);
     final editedTruck = trucksProvider.getTruckById(truckId);
     User? trucker;
     if (editedTruck.trucker != null) {
       trucker = usersProvider.getUserById(editedTruck.trucker!);
     }
-
     List<DropdownMenuItem<String>> options =
         HelperMethods.createDropdownFromUserList(
             usersProvider.getUsersByProfile('User'));
@@ -112,17 +108,15 @@ class _TruckDetailsScreenState extends State<TruckDetailsScreen> {
               child: Column(
                 children: [
                   DropdownButtonFormField(
-                    validator: (value) {
-                      if (value == null)
-                        return 'You must select trucker to assign';
-                    },
-                    hint: Text('Select trucker'),
-                    items: options,
-                    onChanged: (value) {
-                      truckerAssignData.update(
-                          'userId', (attribute) => attribute = value);
-                    },
-                  ),
+                      validator: (value) {
+                        if (value == null)
+                          return 'You must select trucker to assign';
+                      },
+                      hint: Text('Select trucker'),
+                      items: options,
+                      onChanged: (value) {
+                        truckUserId = value as String?;
+                      }),
                   const SizedBox(
                     height: 20,
                   ),
@@ -136,8 +130,13 @@ class _TruckDetailsScreenState extends State<TruckDetailsScreen> {
                               if (_form.currentState!.validate()) {
                                 try {
                                   _form.currentState?.save();
-                                  await trucksProvider
-                                      .assignTrucker(truckerAssignData);
+                                  await trucksProvider.assignTrucker(
+                                      truckUserId!, truckId);
+                                  options =
+                                      HelperMethods.createDropdownFromUserList(
+                                          usersProvider
+                                              .getUsersByProfile('User'));
+                                  setState(() {});
                                 } catch (error) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -146,8 +145,6 @@ class _TruckDetailsScreenState extends State<TruckDetailsScreen> {
                                     ),
                                   );
                                 }
-
-                                setState(() {});
                               }
                             },
                             text: ('Assign trucker')),
@@ -155,9 +152,23 @@ class _TruckDetailsScreenState extends State<TruckDetailsScreen> {
                       editedTruck.trucker != null
                           ? IconButton(
                               onPressed: () async {
-                                await trucksProvider
-                                    .deleteTrucker(editedTruck.truckId);
-                                setState(() {});
+                                try {
+                                  await trucksProvider.deleteTrucker(
+                                      editedTruck.truckId,
+                                      editedTruck.trucker!);
+                                  options =
+                                      HelperMethods.createDropdownFromUserList(
+                                          usersProvider
+                                              .getUsersByProfile('User'));
+                                  setState(() {});
+                                } catch (error) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content:
+                                          Text('Couldn\'t remove trucker.'),
+                                    ),
+                                  );
+                                }
                               },
                               icon: Icon(Icons.delete))
                           : SizedBox()

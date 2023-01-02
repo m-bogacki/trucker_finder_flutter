@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
 import 'package:trucker_finder/providers/logged_user_provider.dart';
 import 'package:trucker_finder/providers/trucks_provider.dart';
+import 'package:trucker_finder/screens/events/add_event_screen.dart';
+import 'package:trucker_finder/screens/events/event_details_screen.dart';
+import 'package:trucker_finder/screens/events/events_overview_screen.dart';
 import 'package:trucker_finder/screens/user_management/my_account_screen.dart';
 import './providers/users_provider.dart';
 import 'package:trucker_finder/screens/auth/password_reset_screen.dart';
@@ -15,7 +18,8 @@ import './screens/auth/login_screen.dart';
 import 'screens/user_management/add_user_screen.dart';
 import './screens/home_screen.dart';
 import './screens/user_management/manage_users_screen.dart';
-import 'providers/auth_provider.dart';
+import './providers/auth_provider.dart';
+import './providers/events_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +45,10 @@ class MyApp extends StatelessWidget {
           create: (_) => Users(null),
           update: (context, auth, previousUsers) => Users(auth.token),
         ),
+        ChangeNotifierProxyProvider<Auth, Events>(
+          create: (_) => Events(null),
+          update: (context, auth, previousUsers) => Events(auth.token),
+        ),
         ChangeNotifierProxyProvider<Auth, LoggedUser>(
           create: (_) => LoggedUser('', '', '', 0),
           update: (context, auth, previousUsers) =>
@@ -51,6 +59,10 @@ class MyApp extends StatelessWidget {
                   auth.loggedUser?.lastName ?? '',
                   auth.loggedUser?.profile ?? 0),
         ),
+        ChangeNotifierProxyProvider<Auth, Events>(
+          create: (_) => Events(null),
+          update: (context, auth, previousEvents) => Events(auth.token),
+        )
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
@@ -78,6 +90,9 @@ class MyApp extends StatelessWidget {
             PasswordResetScreen.routeName: (ctx) => PasswordResetScreen(),
             UserDetailsScreen.routeName: (ctx) => UserDetailsScreen(),
             MyAccountScreen.routeName: (ctx) => MyAccountScreen(),
+            EventsOverviewScreen.routeName: (ctx) => EventsOverviewScreen(),
+            EventDetailsScreen.routeName: (ctx) => EventDetailsScreen(),
+            AddEventScreen.routeName: (ctx) => AddEventScreen(),
           },
           debugShowCheckedModeBanner: false,
         ),

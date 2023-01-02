@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trucker_finder/providers/logged_user_provider.dart';
 
-import '../../helpers/theme_helpers.dart';
-import '../../constants/constants.dart';
-import '../../providers/trucks_provider.dart';
-import '../../providers/user_provider.dart';
-import '../../widgets/ui_elements/avatar.dart';
-import '../../providers/users_provider.dart';
+import '../../../helpers/theme_helpers.dart';
+import '../../../constants/constants.dart';
+import '../../../providers/trucks_provider.dart';
+import '../../../providers/user_provider.dart';
+import '../../ui_elements/avatar.dart';
+import '../../../providers/users_provider.dart';
 
 class TruckersHorizontalList extends StatelessWidget {
   const TruckersHorizontalList({
@@ -29,21 +29,7 @@ class TruckersHorizontalList extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.only(top: 18),
           height: 120,
-          decoration: const BoxDecoration(
-            color: Color(ThemeHelpers.primaryColor),
-            border: Border(
-              bottom: BorderSide(
-                width: 3,
-                color: Color(ThemeHelpers.accentColor),
-              ),
-            ),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black54,
-                  blurRadius: 30.0,
-                  offset: Offset(0.0, 0.75))
-            ],
-          ),
+          decoration: ThemeHelpers.AccentColorUnderlineBoxDecoration(),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: usersToDisplay.length,
@@ -56,7 +42,7 @@ class TruckersHorizontalList extends StatelessWidget {
                     Avatar(30, currentUser),
                     const SizedBox(height: 8),
                     Text(
-                      '${currentUser.firstName} ${currentUser.lastName}' ?? '',
+                      '${currentUser.firstName} ${currentUser.lastName}',
                       style: const TextStyle(
                           color: Color(ThemeHelpers.thirdColor),
                           fontWeight: FontWeight.w500,

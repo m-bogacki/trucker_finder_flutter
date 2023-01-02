@@ -41,12 +41,28 @@ abstract class ThemeHelpers {
     );
   }
 
+  static BoxDecoration AccentColorUnderlineBoxDecoration() {
+    return const BoxDecoration(
+      color: Color(ThemeHelpers.primaryColor),
+      border: Border(
+        bottom: BorderSide(
+          width: 3,
+          color: Color(ThemeHelpers.accentColor),
+        ),
+      ),
+      boxShadow: [
+        BoxShadow(
+            color: Colors.black54, blurRadius: 30.0, offset: Offset(0.0, 0.75))
+      ],
+    );
+  }
+
   static const customSpinner = SpinKitFoldingCube(
     color: Color(accentColor),
   );
 
   static const truckDetailsTextStyle = TextStyle(
-    color: Color(primaryColor),
+    color: Color(thirdColor),
     fontSize: 22,
     fontFamily: 'OpenSans',
   );

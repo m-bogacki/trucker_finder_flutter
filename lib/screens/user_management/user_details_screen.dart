@@ -29,6 +29,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     String editedUserId = ModalRoute.of(context)?.settings.arguments as String;
+    print(editedUserId);
     final usersProvider = Provider.of<Users>(context, listen: false);
     User? editedUser = usersProvider.getUserById(editedUserId);
     if (editedUser == null) {

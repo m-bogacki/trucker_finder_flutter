@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trucker_finder/helpers/form_helpers.dart';
+import 'package:trucker_finder/widgets/buttons/custom_button.dart';
 import '../../widgets/auth/auth_appBar.dart';
 import 'package:provider/provider.dart';
 import '../../providers/users_provider.dart';
@@ -16,7 +17,7 @@ class AddUserScreen extends StatefulWidget {
 }
 
 class _AddUserScreenState extends State<AddUserScreen> {
-  final _form = GlobalKey<FormState>();
+  static final _form = GlobalKey<FormState>();
   bool _isLoading = false;
   double passValidatorWidth = 0;
   bool _passValidated = false;
@@ -233,41 +234,31 @@ class _AddUserScreenState extends State<AddUserScreen> {
                         },
                       ),
                       const SizedBox(
-                        height: 50,
+                        height: 30,
                       ),
-                      TextButton(
-                        onPressed: () async {
-                          if (_form.currentState!.validate()) {
-                            try {
-                              await saveForm();
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Sucessfully created ${registrationData['Email']} account',
+                      CustomButton(
+                          action: () async {
+                            if (_form.currentState!.validate()) {
+                              try {
+                                await saveForm();
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Successfully created ${registrationData['Email']} account',
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                  Navigator.pop(context);
+                                }
+                              } catch (error) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('$error')));
                                 Navigator.pop(context);
                               }
-                            } catch (error) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('$error')));
-                              Navigator.pop(context);
                             }
-                          }
-                        },
-                        style: ButtonStyle(
-                            fixedSize:
-                                MaterialStateProperty.all(const Size(300, 45)),
-                            backgroundColor: MaterialStateProperty.all(
-                                const Color(ThemeHelpers.primaryColor))),
-                        child: const Text(
-                          'Create',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
+                          },
+                          text: 'Add'),
                     ],
                   ),
                 ),

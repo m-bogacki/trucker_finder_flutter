@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:trucker_finder/helpers/helper_methods.dart';
 import 'package:trucker_finder/providers/logged_user_provider.dart';
+import 'package:trucker_finder/screens/events/events_overview_screen.dart';
 import 'package:trucker_finder/screens/trucks/manage_trucks_screen.dart';
 import 'package:trucker_finder/screens/user_management/manage_users_screen.dart';
 import 'package:trucker_finder/screens/user_management/my_account_screen.dart';
@@ -26,6 +27,14 @@ class AppDrawer extends StatelessWidget {
                 Navigator.pushNamed(context, ManageTrucksScreen.routeName);
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.pending_actions),
+              title: const Text('Events'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, EventsOverviewScreen.routeName);
+              },
+            ),
             loggedUser.profile == 2
                 ? ListTile(
                     leading: const Icon(Icons.manage_accounts),
@@ -36,7 +45,7 @@ class AppDrawer extends StatelessWidget {
                     },
                     enabled: HelperMethods.isBoss(loggedUser),
                   )
-                : SizedBox(),
+                : const SizedBox(),
             ListTile(
               leading: const Icon(Icons.account_circle_rounded),
               title: const Text('My account'),

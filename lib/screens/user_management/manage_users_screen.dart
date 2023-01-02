@@ -35,13 +35,13 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage accounts'),
+        title: const Text('Manage accounts'),
         actions: [
           IconButton(
             onPressed: () {
               Navigator.pushNamed(context, AddUserScreen.routeName);
             },
-            icon: Icon(Icons.person_add),
+            icon: const Icon(Icons.person_add),
           )
         ],
       ),
@@ -58,9 +58,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   itemCount: usersProvider.users.length,
                   itemBuilder: (ctx, index) {
                     final user = usersProvider.users[index];
-                    print(user.id);
                     return Dismissible(
-                      key: Key(user.id ?? ''),
+                      key: Key(user.id),
                       direction: DismissDirection.endToStart,
                       background: Container(
                         alignment: Alignment.centerRight,

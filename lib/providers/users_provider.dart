@@ -20,7 +20,7 @@ class Users with ChangeNotifier {
 
   List<User> get users {
     final sortedUsers = [..._users];
-    sortedUsers.sort((a, b) => a.firstName!.compareTo(b.firstName!));
+    sortedUsers.sort((a, b) => a.lastName!.compareTo(b.lastName!));
     return sortedUsers;
   }
 

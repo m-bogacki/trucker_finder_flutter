@@ -68,17 +68,7 @@ class Events extends ChangeNotifier {
             "content-type": "application/json",
             "Authorization": "bearer $authToken"
           });
-      final event = Event(
-        id: '${DateTime.now().toIso8601String()}${Math.Random()}',
-        title: eventData['Title'],
-        description: eventData['Description'],
-        number: eventData['Number'],
-        eventType: EventType.values.elementAt(eventData['EventType']),
-        user: eventData['UserId'],
-        startDate: DateTime.parse(eventData['StartDate']),
-        endDate: DateTime.parse(eventData['EndDate']),
-      );
-      _events.add(event);
+      await fetchAndSetEvents(eventData['UserId']);
       notifyListeners();
     } catch (error) {
       log(error.toString());

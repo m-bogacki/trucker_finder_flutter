@@ -66,9 +66,9 @@ class EventDetailsScreen extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Text(
+                      const Text(
                         'Event type: ',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Color(ThemeHelpers.thirdColor),
                           fontSize: 22,
                         ),

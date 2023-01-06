@@ -25,7 +25,7 @@ class EventBottomModalSheet extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-      height: 300,
+      height: 340,
       child: Form(
         key: _form,
         child: Column(
@@ -58,7 +58,7 @@ class EventBottomModalSheet extends StatelessWidget {
             ),
             TextFormField(
               minLines: 1,
-              maxLines: 5,
+              maxLines: 3,
               keyboardType: TextInputType.multiline,
               validator: (value) {
                 if (value == null || value.isEmpty) {

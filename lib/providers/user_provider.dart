@@ -57,6 +57,7 @@ class User with ChangeNotifier {
       if (extractedData['Errors'] != null) {
         throw HttpException(extractedData['Errors']['Message'][0]);
       }
+      notifyListeners();
       return this;
     } catch (error) {
       log(error.toString());
@@ -66,6 +67,7 @@ class User with ChangeNotifier {
 
   Future<void> refreshUserData() async {
     try {
+      print('refreshing');
       Uri url = Uri.parse('${constants.appUrl}/api/User/$id');
       final response = await http.get(url);
       final decodedResponse = jsonDecode(response.body);

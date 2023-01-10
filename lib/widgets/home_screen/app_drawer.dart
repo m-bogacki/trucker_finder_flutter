@@ -21,7 +21,9 @@ class AppDrawer extends StatelessWidget {
           children: [
             ListTile(
               leading: const Icon(FontAwesomeIcons.truck),
-              title: const Text('Trucks'),
+              title: loggedUser.profile == 2
+                  ? const Text('Trucks')
+                  : const Text('My Truck'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, ManageTrucksScreen.routeName);

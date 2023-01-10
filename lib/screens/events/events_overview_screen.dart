@@ -60,9 +60,20 @@ class EventsOverviewScreen extends StatelessWidget {
                               child: Dismissible(
                                 key: Key(events.events[index].id),
                                 onDismissed: (direction) async {
-                                  eventsProvider
+                                  await eventsProvider
                                       .deleteEvent(events.events[index].id);
                                 },
+                                background: Container(
+                                  alignment: Alignment.centerRight,
+                                  padding: const EdgeInsets.only(right: 20),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 4),
+                                  color: Colors.red,
+                                  child: const Icon(
+                                    Icons.delete,
+                                    color: Colors.white,
+                                  ),
+                                ),
                                 child:
                                     EventCard(events.events[index], loggedUser),
                               ),

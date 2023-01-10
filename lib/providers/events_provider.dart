@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:trucker_finder/constants/constants.dart';
+import 'package:trucker_finder/helpers/helper_methods.dart';
 import '../models/event.dart';
 import 'package:http/http.dart' as http;
 
@@ -45,6 +45,11 @@ class Events extends ChangeNotifier {
           startDate: DateTime.parse(value['StartDate']),
           endDate: DateTime.parse(value['EndDate']),
         );
+        for (var image in value['EventFiles']) {
+          final photo = await HelperMethods.networkImageToBytes(
+              '$appUrl${image['FilePath']}');
+          event.eventFiles.add(photo);
+        }
         eventsToSet.add(event);
       }
       _events = eventsToSet;

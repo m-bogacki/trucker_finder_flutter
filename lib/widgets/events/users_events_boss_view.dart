@@ -43,6 +43,8 @@ class _UsersEventsBossViewState extends State<UsersEventsBossView> {
 
   @override
   Widget build(BuildContext context) {
+    final eventsProvider = Provider.of<Events>(context, listen: false);
+
     return isLoading
         ? const Center(child: ThemeHelpers.customSpinner)
         : Column(
@@ -69,11 +71,28 @@ class _UsersEventsBossViewState extends State<UsersEventsBossView> {
                   itemBuilder: (context, index) {
                     final user = widget.usersProvider
                         .getUserById(eventsToDisplay[index].user);
-                    return Container(
-                        height: 90,
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        width: 200,
-                        child: EventCard(eventsToDisplay[index], user));
+
+                    return Dismissible(
+                      key: Key(eventsToDisplay[index].id),
+                      onDismissed: (direction) async {
+                        await eventsProvider
+                            .deleteEvent(eventsToDisplay[index].id);
+                      },
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 20),
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        color: Colors.red,
+                        child: const Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                      ),
+                      child: Container(
+                          height: 80,
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          child: EventCard(eventsToDisplay[index], user)),
+                    );
                   },
                 ),
               ),

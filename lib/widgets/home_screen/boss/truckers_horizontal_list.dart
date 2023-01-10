@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:trucker_finder/providers/logged_user_provider.dart';
 
 import '../../../helpers/theme_helpers.dart';
-import '../../../constants/constants.dart';
+import 'package:collection/collection.dart';
 import '../../../providers/trucks_provider.dart';
 import '../../../providers/user_provider.dart';
 import '../../ui_elements/avatar.dart';
@@ -16,15 +16,16 @@ class TruckersHorizontalList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loggedUser = Provider.of<LoggedUser>(context, listen: false);
-    final trucksProvider =
-        Provider.of<Trucks>(context, listen: false).getActiveTrucks();
+    final trucksProvider = Provider.of<Trucks>(context).getActiveTrucks();
 
     return Consumer<Users>(
       builder: (context, usersProvider, _) {
-        List<User> usersToDisplay =
-            usersProvider.users.where((user) => user.profile == 1).toList();
-        if (loggedUser.profile == Profiles.indexOf('Boss')) {}
+        List<User> usersToDisplay = [];
+        for (var truck in trucksProvider) {
+          final user = usersProvider.users
+              .firstWhereOrNull((user) => user.id == truck.trucker);
+          if (user != null) usersToDisplay.add(user);
+        }
 
         return Container(
           padding: const EdgeInsets.only(top: 18),

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
 import 'package:trucker_finder/providers/logged_user_provider.dart';
 import 'package:trucker_finder/providers/trucks_provider.dart';
-import 'package:trucker_finder/screens/events/add_event_screen.dart';
 import 'package:trucker_finder/screens/events/event_details_screen.dart';
 import 'package:trucker_finder/screens/events/events_overview_screen.dart';
 import 'package:trucker_finder/screens/user_management/my_account_screen.dart';
@@ -92,7 +91,6 @@ class MyApp extends StatelessWidget {
             MyAccountScreen.routeName: (ctx) => MyAccountScreen(),
             EventsOverviewScreen.routeName: (ctx) => EventsOverviewScreen(),
             EventDetailsScreen.routeName: (ctx) => EventDetailsScreen(),
-            AddEventScreen.routeName: (ctx) => AddEventScreen(),
           },
           debugShowCheckedModeBanner: false,
         ),

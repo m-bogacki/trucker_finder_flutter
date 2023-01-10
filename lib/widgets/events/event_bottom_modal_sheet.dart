@@ -1,13 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../../helpers/helper_methods.dart';
 import '../../providers/logged_user_provider.dart';
 import '../../providers/events_provider.dart';
 import 'package:provider/provider.dart';
-
+import 'package:image_picker/image_picker.dart';
 import '../buttons/custom_button.dart';
 
-class EventBottomModalSheet extends StatelessWidget {
+class EventBottomModalSheet extends StatefulWidget {
   static final _form = GlobalKey<FormState>();
+
+  @override
+  State<EventBottomModalSheet> createState() => _EventBottomModalSheetState();
+}
+
+class _EventBottomModalSheetState extends State<EventBottomModalSheet> {
   Map<String, dynamic> eventData = {
     "UserId": '',
     "Title": '',
@@ -18,16 +26,17 @@ class EventBottomModalSheet extends StatelessWidget {
     "EventType": 0,
     "EventFiles": []
   };
+  List imagesToShow = [];
   @override
   Widget build(BuildContext context) {
     final loggedUserId = Provider.of<LoggedUser>(context, listen: false).id;
     final eventsProvider = Provider.of<Events>(context, listen: false);
     return Container(
-      margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom, top: 50),
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-      height: 340,
       child: Form(
-        key: _form,
+        key: EventBottomModalSheet._form,
         child: Column(
           children: [
             DropdownButtonFormField(
@@ -39,7 +48,9 @@ class EventBottomModalSheet extends StatelessWidget {
               hint: Text('Event type'),
               items: HelperMethods.createDropdownFromEventType(),
               onChanged: (value) {
-                eventData['EventType'] = value;
+                setState(() {
+                  eventData['EventType'] = value;
+                });
               },
               onSaved: (value) {
                 eventData['EventType'] = value;
@@ -72,30 +83,73 @@ class EventBottomModalSheet extends StatelessWidget {
                 eventData['Description'] = value;
               },
             ),
-            eventData['EventType'] == 2
-                ? TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Number field can\'t be empty.';
-                      }
-                    },
-                    decoration: const InputDecoration(labelText: 'Number*'),
-                    onChanged: (value) {
-                      eventData['Number'] = value;
-                    },
-                    onSaved: (value) {
-                      eventData['Number'] = value;
-                    },
-                  )
-                : const SizedBox(),
             const SizedBox(
               height: 30,
             ),
+            eventData['EventType'] == 2 || eventData['EventType'] == 0
+                ? Row(children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 90,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemCount: imagesToShow.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              width: 80,
+                              height: 80,
+                              child: Image.memory(imagesToShow[index]),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () async {
+                          final imageAsBytes = await HelperMethods.getPicture(
+                              ImageSource.camera);
+                          if (imageAsBytes != null) {
+                            setState(() {
+                              imagesToShow.add(imageAsBytes);
+                            });
+                          }
+                        },
+                        icon: const Icon(Icons.photo_camera)),
+                    IconButton(
+                      onPressed: () async {
+                        final imageAsBytes =
+                            await HelperMethods.getPicture(ImageSource.gallery);
+                        if (imageAsBytes != null) {
+                          setState(() {
+                            imagesToShow.add(imageAsBytes);
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.photo_album),
+                    ),
+                  ])
+                : const SizedBox(),
+            const SizedBox(
+              height: 20,
+            ),
             CustomButton(
               action: () async {
-                if (_form.currentState!.validate()) {
-                  _form.currentState?.save();
+                if (EventBottomModalSheet._form.currentState!.validate()) {
+                  EventBottomModalSheet._form.currentState?.save();
                   try {
+                    if (imagesToShow.isNotEmpty) {
+                      for (var image in imagesToShow) {
+                        int iterator = 1;
+                        eventData['EventFiles'].add({
+                          "FileName": "${eventData['Title']}$iterator",
+                          "Base64File": {
+                            "Base64String": base64Encode(image).toString()
+                          }
+                        });
+                        iterator++;
+                      }
+                    }
                     eventData['UserId'] = loggedUserId;
                     await eventsProvider.addEvent(eventData);
                     if (context.mounted) {

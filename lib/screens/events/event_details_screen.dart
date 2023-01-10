@@ -4,9 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:trucker_finder/helpers/theme_helpers.dart';
 import 'package:trucker_finder/widgets/events/event_icon.dart';
-import 'package:trucker_finder/widgets/ui_elements/text_header.dart';
 import '../../providers/events_provider.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:full_screen_image_null_safe/full_screen_image_null_safe.dart';
 
 class EventDetailsScreen extends StatelessWidget {
   static const routeName = '/event-details';
@@ -80,13 +80,37 @@ class EventDetailsScreen extends StatelessWidget {
                           color: Color(ThemeHelpers.thirdColor),
                           fontSize: 22,
                         ),
-                      )
+                      ),
                     ],
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [],
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  event.eventFiles.isNotEmpty
+                      ? const Text(
+                          'Photos',
+                          style: TextStyle(
+                            color: Color(ThemeHelpers.thirdColor),
+                            fontSize: 22,
+                          ),
+                        )
+                      : const SizedBox(),
+                  Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    height: 120,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemCount: event.eventFiles.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                            margin: const EdgeInsets.only(right: 10),
+                            child: FullScreenWidget(
+                                child: Hero(
+                                    tag: index,
+                                    child: Image.memory(
+                                        event.eventFiles[index]))));
+                      },
                     ),
                   ),
                 ],

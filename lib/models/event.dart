@@ -11,7 +11,6 @@ class Event {
     required this.startDate,
     this.endDate,
     required this.eventType,
-    this.eventFiles,
   });
 
   String id;
@@ -23,5 +22,5 @@ class Event {
   DateTime startDate;
   DateTime? endDate;
   EventType eventType;
-  List<Map<String, dynamic>>? eventFiles;
+  List eventFiles = [];
 }
